@@ -250,11 +250,6 @@ class S3FileStorage(FileStorageInterface):
                     },
                     ExpiresIn=3600,
                 )
-                # 添加域名替换逻辑
-                if self.s3_hostname:
-                    from urllib.parse import urlparse
-                    parsed = urlparse(link)
-                    link = f"{self.s3_hostname}{parsed.path}?{parsed.query}"
             tmp = io.BytesIO()
             async with aiohttp.ClientSession() as session:
                 async with session.get(link) as resp:
@@ -292,6 +287,11 @@ class S3FileStorage(FileStorageInterface):
                     },
                     ExpiresIn=3600,
                 )
+                # 添加域名替换逻辑
+                if self.s3_hostname:
+                    from urllib.parse import urlparse
+                    parsed = urlparse(link)
+                    link = f"{self.s3_hostname}{parsed.path}?{parsed.query}"
                 return result
 
     async def save_chunk(self, upload_id: str, chunk_index: int, chunk_data: bytes, chunk_hash: str, save_path: str):
