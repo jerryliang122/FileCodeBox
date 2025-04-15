@@ -290,8 +290,8 @@ class S3FileStorage(FileStorageInterface):
                 # 添加域名替换逻辑
                 if self.s3_hostname:
                     from urllib.parse import urlparse
-                    parsed = urlparse(link)
-                    link = f"{self.s3_hostname}{parsed.path}?{parsed.query}"
+                    parsed = urlparse(result)
+                    result = f"{self.s3_hostname}{parsed.path}?{parsed.query}"
                 return result
 
     async def save_chunk(self, upload_id: str, chunk_index: int, chunk_data: bytes, chunk_hash: str, save_path: str):
