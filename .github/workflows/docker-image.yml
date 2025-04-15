@@ -29,11 +29,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Login to DockerHub
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v4
@@ -41,9 +42,12 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/filecodebox:beta
+          tags: |
+            ghcr.io/jerryliang122/filecodebox:beta
+            ghcr.io/jerryliang122/filecodebox:${{ github.sha }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+  
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
